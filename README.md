@@ -217,9 +217,19 @@ export VAULT_TOKEN=root
 export VAULT_TRANSIT_KEY_NAME=ds-poc
 ```
 
+### Gracle Boot 실행
+```bash
+gradle bootRun
+```
+
+### 빌드
+```bash
+gradle build
+```
+
 ### 실행
 ```bash
-java -jar demo-0.1.0.jar
+java -jar demo-0.1.2.jar
 ```
 
 [](http://localhost:8080/) 접속하여 Insert Data에 데이터 추가하고 웹에서는 잘 나타나는지 확인
