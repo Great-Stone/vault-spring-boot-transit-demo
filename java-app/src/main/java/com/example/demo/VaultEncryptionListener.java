@@ -16,6 +16,9 @@ public class VaultEncryptionListener {
     public void encryptData(VaultData entity) {
         // 엔티티의 민감한 데이터를 암호화
         String encryptedData = vaultService.encryptData(entity.getData());
+        System.out.println("***************************");
+        System.out.println(encryptedData);
+        System.out.println("***************************");
         entity.setData(encryptedData);
     }
 

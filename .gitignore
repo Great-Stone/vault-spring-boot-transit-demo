@@ -1,12 +1,13 @@
 **/.DS_Store
 
 # Ignore Gradle project-specific cache directory
-**/.gradle
-**/.gradletasknamecache
-**/*.class
+java-app/.gradle
+java-app/.gradletasknamecache
+java-app/*.class
 
 # Ignore Gradle build output directory
-**/build/
+java-app/bin
+java-app/build/
 
 **/terraform-docker/*.tfstate*
 **/terraform-docker/.terraform

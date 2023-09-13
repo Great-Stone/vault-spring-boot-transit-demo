@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ByteArrayInputStream;
+import java.net.URLEncoder;
 
 import java.util.Base64;
 import java.util.Base64.Decoder;
@@ -102,16 +103,22 @@ public class VaultDataController {
         byte[] encryptedData = vaultService.encryptData(encoded);
 
         // 바이트 배열을 사용하여 새로운 FileInputStream 생성
-        File tempFile = File.createTempFile("encrypted", ".txt"); // 임시 파일 생성
+        String originalFilename = file.getOriginalFilename();
+        String suffix = ".enc";
+
+        File tempFile = new File(originalFilename + suffix);
         FileOutputStream fileOutputStream = new FileOutputStream(tempFile);
         fileOutputStream.write(encryptedData);
         fileOutputStream.close();
 
 
         // 바이트 배열을 사용하여 새로운 FileInputStream 생성
+        String encodedFileName = URLEncoder.encode(tempFile.getName(), "UTF-8");
+        encodedFileName = encodedFileName.replaceAll("\\+", "%20");
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        headers.setContentDispositionFormData("attachment", tempFile.getName());
+        headers.setContentDispositionFormData("attachment", encodedFileName);
 
         System.out.println(tempFile.getName());
 
@@ -145,8 +152,14 @@ public class VaultDataController {
         // Base64 Decoding
         byte[] decoded = Base64.getDecoder().decode(decryptedData);
 
+        // 확장자 검출
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename.endsWith(".enc")) {
+          originalFilename = originalFilename.substring(0, originalFilename.length() - 4);
+        }
+
         // 바이트 배열을 사용하여 새로운 FileInputStream 생성
-        File tempFile = File.createTempFile("decrypted", ".txt"); // 임시 파일 생성
+        File tempFile = new File(originalFilename);
         FileOutputStream fileOutputStream = new FileOutputStream(tempFile);
         fileOutputStream.write(decoded);
         fileOutputStream.close();
@@ -154,9 +167,12 @@ public class VaultDataController {
         // FileInputStream fileInputStream = new FileInputStream(tempFile);
 
         // 바이트 배열을 사용하여 새로운 FileInputStream 생성
+        String encodedFileName = URLEncoder.encode(tempFile.getName(), "UTF-8");
+        encodedFileName = encodedFileName.replaceAll("\\+", "%20");
+        
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        headers.setContentDispositionFormData("attachment", tempFile.getName());
+        headers.setContentDispositionFormData("attachment", encodedFileName);
 
         System.out.println(tempFile.getName());
 

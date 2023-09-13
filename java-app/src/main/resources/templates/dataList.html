@@ -4,21 +4,47 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link href="/css/bootstrap-icons.css" rel="stylesheet">
     <title>Data List</title>
 </head>
 <body>
+    <header>
+        <div class="px-3 py-2 text-bg-dark border-bottom">
+            <div class="container">
+                <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                    <a class="d-flex align-items-center text-white text-decoration-none" href="#">
+                        &nbsp;&nbsp;<img src="/assets/vault.svg" width="30" height="30" class="d-inline-block align-top" alt="">
+                        &nbsp;Vault - Transit POC
+                    </a>
+
+                    <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
+                        <li>
+                            <a href="https://developer.hashicorp.com/vault/docs/secrets/transit" class="nav-link text-light"><i class="bi bi-link-45deg"></i> Vault Doc</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+    <br>
     <div class="container">
         <div class="row">
             <div class="col-8">
-                <h2>Insert Data</h2>
+                <h3><i class="bi bi-database-fill-lock"></i> Data Encryption</h3>
+
                 <form th:action="@{/insertData}" th:object="${newData}" method="post">
-                    <input type="text" class="form-control" th:field="*{data}" placeholder="Data">
-                    <button type="submit" class="btn btn-primary">Insert</button>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="bi-textarea-t"></i></span>
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-control-lg" th:field="*{data}" id="inputData" placeholder="Data here!!!">
+                            <label for="inputData">Insert data</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-arrow-return-left"></i></button>
+                    </div>
                 </form>
 
                 <hr>
 
-                <h2>Data List</h2>
                 <!-- Nav tabs -->
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
@@ -71,19 +97,34 @@
             </div>
 
             <div class="col-4">
-                <h2>File Upload - Encrypt</h2>
-                <form th:action="@{/uploadEncrypt}" method="post" enctype="multipart/form-data">
-                    <input type="file" class="form-control" name="file" id="file" />
-                    <button type="submit" class="btn btn-primary">Encrypte</button>
-                </form>
+                <h3><i class="bi bi-file-earmark-lock-fill"></i> File Encryption</h3>
 
-                <hr>
+                <div>
+                    <form th:action="@{/uploadEncrypt}" method="post" enctype="multipart/form-data">
+                        <div class="input-group mb-3">
+                            <input type="file" class="form-control" name="file" id="file" />
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-upload"></i></button>
+                        </div>
+                    </form>
+                </div>
 
-                <h2>File Upload - Decrypt</h2>
-                <form th:action="@{/uploadDecrypt}" method="post" enctype="multipart/form-data">
-                    <input type="file" class="form-control" name="file" id="file" />
-                    <button type="submit" class="btn btn-primary">Decrypte</button>
-                </form>
+                <div th:if="${#strings.equals(@environment.getProperty('s3_enabled'), 'true')}">
+                    <hr>
+                    <h3><i class="bi bi-eye"></i> File Decryption</h3>
+                    <div>
+                        <form th:action="@{/uploadDecrypt}" method="post" enctype="multipart/form-data">
+                            <div class="input-group mb-3">
+                                <input type="file" class="form-control" name="file" id="file" />
+                                <button type="submit" class="btn btn-primary"><i class="bi bi-upload"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div th:if="${#strings.equals(@environment.getProperty('s3_enabled'), 'true')}">
+                    <hr>
+                    here!!!
+                </div>
             </div>
         </div>
     </div>

@@ -2,7 +2,7 @@
 
 ## 빌드 환경 및 빌드
 
-### Java 17
+### Java 17+
 
 ```bash
 $ java -version
@@ -154,50 +154,44 @@ mysql>
 ### mysql create table example
 
 ```sql
-mysql> CREATE DATABASE VaultData;
-
-Query OK, 1 row affected (0.00 sec)
+CREATE DATABASE VaultData;
 ```
 
 ### mysql user create
 
 ```sql
-mysql> CREATE USER app@'%' IDENTIFIED BY 'password';
+CREATE USER app@'%' IDENTIFIED BY 'password';
 
-mysql> GRANT ALL PRIVILEGES
+GRANT ALL PRIVILEGES
     ON VaultData.*
     TO app@'%';
 
-mysql> FLUSH PRIVILEGES;
+FLUSH PRIVILEGES;
 ```
 
 ### mysql table example
 
 ```sql
+USE VaultData;
 
-mysql> USE VaultData;
-
-Database changed
-
-mysql> create table vault_data (
+create table vault_data (
   id int unsigned auto_increment not null,
-  data varchar(32) not null,
+  data varchar(200) not null,
   date_created timestamp default now(),
   primary key (id)
 );
-
-Query OK, 0 rows affected (0.02 sec)
 ```
 
 ### mysql insert test
 
 ```sql
-mysql> INSERT INTO vault_data (data) VALUES ('1st test data');
+INSERT INTO vault_data (data) VALUES ('1st test data');
 
-Query OK, 1 row affected (0.02 sec)
+SELECT * FROM vault_data;
+```
 
-mysql> SELECT * FROM vault_data;
-
+Output sample
+```log
 +----+---------------+---------------------+
 | id | data          | date_created        |
 +----+---------------+---------------------+
@@ -228,4 +222,67 @@ export VAULT_TRANSIT_KEY_NAME=ds-poc
 java -jar demo-0.1.0.jar
 ```
 
-![](./images/screenshot_main.png)
+[](http://localhost:8080/) 접속하여 Insert Data에 데이터 추가하고 웹에서는 잘 나타나는지 확인
+
+Mysql에서 조회
+```sql
+mysql> SELECT * FROM vault_data;
++----+-------------------------------------------------------------------+----------------------------+
+| id | data                                                              | date_created               |
++----+-------------------------------------------------------------------+----------------------------+
+|  1 | 1st test data                                                     | 2023-09-08 10:25:25.000000 |
+|  2 | 2nd test data                                                     | 2023-09-08 21:35:47.359000 |
+|  3 | vault:v1:crYoSFh9zQ73cZmpwCiH89Tjs+IBKbEQ97cPYZ4gNdTp5sm7D32rzvY= | 2023-09-08 22:21:27.623000 |
+|  4 | vault:v1:QPRoQ1JPKKoRAyS9NZ203RwA6inlpD2MCyICJECW7EjDD8Ai2yZvv80= | 2023-09-08 22:46:36.339000 |
++----+-------------------------------------------------------------------+----------------------------+
+```
+
+### Vault Transit Rotate
+
+```bash
+$ vault write -f transit/keys/ds-poc/rotate
+
+Key                       Value
+---                       -----
+allow_plaintext_backup    false
+auto_rotate_period        0s
+deletion_allowed          false
+derived                   false
+exportable                false
+imported_key              false
+keys                      map[1:1694166532 2:1694181431]
+latest_version            2
+min_available_version     0
+min_decryption_version    1
+min_encryption_version    0
+name                      ds-poc
+supports_decryption       true
+supports_derivation       true
+supports_encryption       true
+supports_signing          false
+type                      aes256-gcm96
+```
+
+웹페이지에서 새로운 값 입력 후 Mysql에서 조회
+
+```sql
+mysql> SELECT * FROM vault_data;
++----+-------------------------------------------------------------------+----------------------------+
+| id | data                                                              | date_created               |
++----+-------------------------------------------------------------------+----------------------------+
+|  1 | 1st test data                                                     | 2023-09-08 10:25:25.000000 |
+|  2 | 2nd test data                                                     | 2023-09-08 21:35:47.359000 |
+|  3 | vault:v1:crYoSFh9zQ73cZmpwCiH89Tjs+IBKbEQ97cPYZ4gNdTp5sm7D32rzvY= | 2023-09-08 22:21:27.623000 |
+|  4 | vault:v1:QPRoQ1JPKKoRAyS9NZ203RwA6inlpD2MCyICJECW7EjDD8Ai2yZvv80= | 2023-09-08 22:46:36.339000 |
+|  5 | vault:v2:WVQHgYp8qOIxmhi+ZvhLXIhaqr74XOU8AHeWCMTaEfQmPyEhsVimOvU= | 2023-09-08 22:58:00.362000 |
++----+-------------------------------------------------------------------+----------------------------+
+```
+
+decryption 최소 버전 조정
+
+```bash
+$ vault write -f transit/keys/ds-poc/config min_decryption_version=2
+```
+
+Web 출력 확인
+
