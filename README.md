@@ -286,3 +286,4 @@ $ vault write -f transit/keys/ds-poc/config min_decryption_version=2
 
 Web 출력 확인
 
+![](./images/screenshot_main.png)
