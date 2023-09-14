@@ -1,0 +1,11 @@
+.card-container {
+  /* 기본 높이 설정; 이 값은 필요에 따라 변경 가능 */
+  max-height: 600px;
+  /* 스크롤을 숨김 */
+  overflow-y: hidden;
+}
+
+/* 스크롤이 필요한 경우에 적용할 스타일 */
+.scrollable {
+  overflow-y: auto;
+}

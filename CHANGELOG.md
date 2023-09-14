@@ -1,3 +1,7 @@
+# 0.2.0
+
+- S3 Upload / Download
+
 # 0.1.2
 
 - File Unicode

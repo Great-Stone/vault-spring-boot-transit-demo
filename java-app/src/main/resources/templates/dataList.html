@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
     <link href="/css/bootstrap-icons.css" rel="stylesheet">
+    <link href="/css/file-cards.css" rel="stylesheet">
     <title>Data List</title>
 </head>
 <body>
@@ -43,7 +44,7 @@
                     </div>
                 </form>
 
-                <hr>
+                <br>
 
                 <!-- Nav tabs -->
                 <ul class="nav nav-tabs">
@@ -108,26 +109,96 @@
                     </form>
                 </div>
 
-                <div th:if="${#strings.equals(@environment.getProperty('s3_enabled'), 'true')}">
-                    <hr>
-                    <h3><i class="bi bi-eye"></i> File Decryption</h3>
-                    <div>
-                        <form th:action="@{/uploadDecrypt}" method="post" enctype="multipart/form-data">
-                            <div class="input-group mb-3">
-                                <input type="file" class="form-control" name="file" id="file" />
-                                <button type="submit" class="btn btn-primary"><i class="bi bi-upload"></i></button>
+                <hr>
+
+                <h3><i class="bi bi-eye"></i> File Decryption</h3>
+                <div>
+                    <form th:action="@{/uploadDecrypt}" method="post" enctype="multipart/form-data">
+                        <div class="input-group mb-3">
+                            <input type="file" class="form-control" name="file" id="file" />
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-upload"></i></button>
+                        </div>
+                    </form>
+                </div>
+                
+                <hr>
+                <div th:if="${s3Enable}">
+                    <h3><i class="bi bi-cloud-check"></i> S3 Files</h3>
+                    <i class="bi bi-bucket"></i> <span th:text="${s3BucketName}"></span>
+                </div>
+                <div th:if="not ${s3Enable}">
+                    <h3><i class="bi bi-cloud-slash"></i> S3 Files</h3>
+                    <i class="bi bi-bucket"></i> <span class="placeholder col-10"></span>
+                </div>
+                <br>
+                <div class="card-container" id="cardContainer">
+                    <div class="card" aria-hidden="true" th:each="item, iterStat : ${file_data}">
+                        <div class="row g-0">
+                            <div class="col-md-9">
+                                <div class="card-body p-3">
+                                    <h6 class="card-title" style="text-indent: -10px; margin-left: 20px;">
+                                        <i class="bi bi-file-earmark-medical"></i><span th:text="${item.key}"></span>
+                                    </h6>
+                                    <p class="fs-6">
+                                        <i class="bi bi-pie-chart"></i>
+                                        <span class="fw-light" th:if="${item.size < 1024}" th:text="${item.size + ' B'}"></span>
+                                        <span class="fw-light" th:if="${item.size >= 1024 and item.size < 1048576}" th:text="${#numbers.formatDecimal(item.size/1024, 1, 1) + ' KB'}"></span>
+                                        <span class="fw-light" th:if="${item.size >= 1048576 and item.size < 1073741824}" th:text="${#numbers.formatDecimal(item.size/1048576, 1, 1) + ' MB'}"></span>
+                                        <span class="fw-light" th:if="${item.size >= 1073741824}" th:text="${#numbers.formatDecimal(item.size/1073741824, 1, 1) + ' GB'}"></span>
+                                        <br>
+                                        <i class="bi bi-calendar-date"></i>
+                                        <span class="utc-time fw-light" th:id="'utcTime' + ${iterStat.index}" th:text="${item.lastModified}"></span>
+                                        <span class="local-time fw-light" th:id="'localTime' + ${iterStat.index}"></span>
+                                    </p>
+                                </div>
                             </div>
-                        </form>
+                            <div class="col-md-3">
+                                <div class="card-body p-3">
+                                    <div class="btn-group-vertical" role="group">
+                                        <a th:href="@{/downloadFileRaw/{fileName}(fileName=${item.key})}" class="btn btn-warning btn-sm">
+                                            RAW <i class="bi bi-download"></i>
+                                        </a>
+                                        <a th:href="@{/downloadFileDec/{fileName}(fileName=${item.key})}" class="btn btn-info btn-sm">
+                                            DEC <i class="bi bi-download"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" aria-hidden="true" th:if="${#strings.isEmpty(file_data)}">
+                        <div class="row g-0">
+                            <div class="col-md-9">
+                                <div class="card-body">
+                                    <h5 class="card-title placeholder-glow">
+                                        <span class="placeholder col-1"></span>
+                                        <span class="placeholder col-8"></span>
+                                    </h5>
+                                    <p class="card-text placeholder-glow">
+                                        <span class="placeholder col-4"></span>
+                                        <span class="placeholder col-6"></span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card-body">
+                                    <div class="btn-group-vertical" role="group">
+                                        <button type="button" class="btn btn-warning btn-sm disabled" aria-disabled="true">RAW<br><i class="bi bi-download"></i></button>
+                                        <button type="button" class="btn btn-info btn-sm disabled" aria-disabled="true">DEC<br><i class="bi bi-download"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div th:if="${#strings.equals(@environment.getProperty('s3_enabled'), 'true')}">
-                    <hr>
-                    here!!!
-                </div>
+                <hr th:if="${not #strings.isEmpty(file_data)}">
             </div>
         </div>
     </div>
     <script src="/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="/js/jquery-3.7.1.min.js"></script>
+    <script src="/js/file-cards.js"></script>
 </body>
 </html>

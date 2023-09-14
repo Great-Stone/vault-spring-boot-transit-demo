@@ -2,12 +2,10 @@ package com.example.demo;
 
 import java.io.UnsupportedEncodingException;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.vault.core.VaultOperations;
 import org.springframework.vault.support.Plaintext;
-import org.springframework.vault.support.Ciphertext;
 import org.springframework.vault.VaultException;
 
 @Service
@@ -18,13 +16,13 @@ public class VaultService {
   private String transitKeyName;
 
   public VaultService(VaultOperations vaultOperations) {
-      this.vaultOperations = vaultOperations;
+    this.vaultOperations = vaultOperations;
   }
 
   public String encryptData(String dataToEncrypt) {
-      Plaintext plaintext = Plaintext.of(dataToEncrypt);
-      String encryptedData  = vaultOperations.opsForTransit().encrypt(transitKeyName, plaintext).getCiphertext();
-      return encryptedData;
+    Plaintext plaintext = Plaintext.of(dataToEncrypt);
+    String encryptedData = vaultOperations.opsForTransit().encrypt(transitKeyName, plaintext).getCiphertext();
+    return encryptedData;
   }
 
   public String decryptData(String encryptedData) {
@@ -35,7 +33,7 @@ public class VaultService {
       } catch (VaultException e) {
         System.out.println(e.getMessage());
         if (e.getMessage().contains("too old")) {
-            return encryptedData;
+          return encryptedData;
         }
         return "Decryption Error";
       }
@@ -49,7 +47,8 @@ public class VaultService {
     Plaintext plaintext = Plaintext.of(dataToEncrypt);
 
     // 데이터 암호화
-    byte[] encryptedData = vaultOperations.opsForTransit().encrypt(transitKeyName, plaintext).getCiphertext().getBytes();
+    byte[] encryptedData = vaultOperations.opsForTransit().encrypt(transitKeyName, plaintext).getCiphertext()
+        .getBytes();
 
     return encryptedData;
   }

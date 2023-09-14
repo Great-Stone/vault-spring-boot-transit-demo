@@ -130,7 +130,7 @@ $ echo 'export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"' >> ~/.zshrc
 ```bash
 $ export MYSQL_HOST=127.0.0.1
 $ export MYSQL_PORT=3306
-$ mysql -h $MYSQL_HOST -p $MYSQL_PORT -u admin -ppassword
+$ mysql -h $MYSQL_HOST -p $MYSQL_PORT -u root -ppassword
 
 # if docker
 $ docker exec -it mysql mysql -u root -ppassword
@@ -215,6 +215,9 @@ export VAULT_PORT=8200
 export VAULT_SCHEME=http
 export VAULT_TOKEN=root
 export VAULT_TRANSIT_KEY_NAME=ds-poc
+export S3_ENABLE=true
+export S3_BUCKET_NAME=vault-transit-file-encryption-poc
+export AWS_REGION=ap-northeast-2
 ```
 
 ### Gracle Boot 실행

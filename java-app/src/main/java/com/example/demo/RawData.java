@@ -18,7 +18,7 @@ public class RawData {
   private Date dateCreated;
 
    // Getter 메서드
-   public Long getId() {
+  public Long getId() {
     return id;
   }
 

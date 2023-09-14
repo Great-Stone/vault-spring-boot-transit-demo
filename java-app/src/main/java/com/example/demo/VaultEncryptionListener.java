@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import jakarta.persistence.PostPersist;
 import jakarta.persistence.PostLoad;
-import org.springframework.vault.support.Ciphertext;
 
 @Component
 public class VaultEncryptionListener {
