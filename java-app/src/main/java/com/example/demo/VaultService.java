@@ -1,4 +1,5 @@
 package com.example.demo;
+import java.lang.String;
 
 import java.io.UnsupportedEncodingException;
 
@@ -40,6 +41,12 @@ public class VaultService {
     } else {
       return encryptedData;
     }
+  }
+
+  public String rewrapData(String encryptChiperText) {
+    String rewrapChiperText = vaultOperations.opsForTransit().rewrap(transitKeyName, encryptChiperText);
+
+    return rewrapChiperText;
   }
 
   public byte[] encryptData(byte[] dataToEncrypt) {

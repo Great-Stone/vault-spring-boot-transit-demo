@@ -218,6 +218,10 @@ export VAULT_TRANSIT_KEY_NAME=ds-poc
 export S3_ENABLE=true
 export S3_BUCKET_NAME=vault-transit-file-encryption-poc
 export AWS_REGION=ap-northeast-2
+
+# Optino
+export AWS_ACCESS_KEY_ID=ASI12312312312
+export AWS_SECRET_ACCESS_KEY=SKadfaewr12123123
 ```
 
 ### Gracle Boot 실행

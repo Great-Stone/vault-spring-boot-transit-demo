@@ -9,7 +9,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.lang.String;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.Base64;
 import java.util.Base64.Decoder;
 import java.util.Base64.Encoder;
@@ -19,11 +22,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
+import org.bouncycastle.util.Iterable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -69,8 +74,8 @@ public class VaultDataController {
 
   @GetMapping("/")
   public String getAllData(Model model) {
-    Iterable<VaultData> vaultData = vaultDataRepository.findAll();
-    Iterable<RawData> rawData = rawDataRepository.findAll();
+    List<VaultData> vaultData = vaultDataRepository.findAll();
+    List<RawData> rawData = rawDataRepository.findAll();
 
     model.addAttribute("vault_data", vaultData);
     model.addAttribute("raw_data", rawData);
@@ -104,6 +109,30 @@ public class VaultDataController {
   @PostMapping("/insertData")
   public String insertData(VaultData newData) {
     vaultDataRepository.save(newData);
+    return "redirect:/"; // 다시 데이터 목록으로 리다이렉트
+  }
+
+  @GetMapping("/rewrapData/{id}")
+  public String rewrapData(@PathVariable Long id) {
+    // id를 사용하여 VaultData 엔터티를 찾습니다.
+    Optional<RawData> optionalVaultData = rawDataRepository.findById(id);
+
+    if (optionalVaultData.isPresent()) {
+        RawData rawData = optionalVaultData.get();
+        String encryptChiperText = rawData.getData();
+
+        System.out.println("********************");
+        System.out.println(encryptChiperText);
+        
+        String rewrapChiperText = vaultService.rewrapData(encryptChiperText);
+        rawData.setData(rewrapChiperText);
+
+        rawDataRepository.save(rawData);
+    } else {
+        // 해당 id를 가진 VaultData 엔터티를 찾을 수 없는 경우의 처리
+        // (예: 로그 출력, 예외 발생 등)
+    }
+
     return "redirect:/"; // 다시 데이터 목록으로 리다이렉트
   }
 

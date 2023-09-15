@@ -31,7 +31,16 @@ resource "vault_mount" "transit" {
 }
 
 resource "vault_transit_secret_backend_key" "key" {
-  backend = vault_mount.transit.path
-  name    = "ds-poc"
-  type = "aes256-gcm96"
+  backend          = vault_mount.transit.path
+  name             = "ds-poc"
+  type             = "aes256-gcm96"
+  deletion_allowed = true
+}
+
+provider "aws" {
+  region = "ap-northeast-2"
+}
+
+resource "aws_s3_bucket" "example" {
+  bucket = "vault-transit-file-encryption-poc"
 }

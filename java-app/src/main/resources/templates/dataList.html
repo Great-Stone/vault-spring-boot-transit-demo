@@ -90,6 +90,9 @@
                                     <td width="50px" th:text="${item.id}"></td>
                                     <td class="col" style="word-break:break-all" th:text="${item.data}"></td>
                                     <td width="220px" th:text="${item.dateCreated}"></td>
+                                    <td width="50px">
+                                        <a th:if="${#strings.startsWith(item.data, 'vault:')}" th:href="@{/rewrapData/{id}(id=${item.id})}" class="btn btn-primary btn-sm"><i class="bi bi-arrow-left-right"></i></a>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
