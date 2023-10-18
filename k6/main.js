@@ -5,8 +5,9 @@ import { textSummary } from "https://jslib.k6.io/k6-summary/0.0.1/index.js";
 import { sleep } from 'k6';
 
 export let options = {
-    vus: 100,  // number of virtual users
-    duration: '10s',  // duration of the test
+    vus: 10,  // 동시 실행 사용자 수를 10개로 설정
+    // duration: '10s',  // duration of the test
+    iterations: 500000, // 총 요청 수를 500,000건으로 설정
 };
 
 export function handleSummary(data) {
