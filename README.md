@@ -304,3 +304,45 @@ $ vault write -f transit/keys/ds-poc/config min_decryption_version=2
 Web 출력 확인
 
 ![](./images/screenshot_main.png)
+
+### Stress Test (K6)
+
+```bash
+# k6 directory
+$ k6 run main.js
+
+          /\      |‾‾| /‾‾/   /‾‾/   
+     /\  /  \     |  |/  /   /  /    
+    /  \/    \    |     (   /   ‾‾\  
+   /          \   |  |\  \ |  (‾)  | 
+  / __________ \  |__| \__\ \_____/ .io
+
+  execution: local
+     script: main.js
+     output: -
+
+  scenarios: (100.00%) 1 scenario, 100 max VUs, 40s max duration (incl. graceful stop):
+           * default: 100 looping VUs for 10s (gracefulStop: 30s)
+
+
+     data_received..................: 674 kB 67 kB/s
+     data_sent......................: 1.8 MB 174 kB/s
+     http_req_blocked...............: avg=38.73µs  min=0s       med=2µs      max=4.08ms   p(90)=4µs      p(95)=5µs    
+     http_req_connecting............: avg=26.84µs  min=0s       med=0s       max=2.86ms   p(90)=0s       p(95)=0s     
+     http_req_duration..............: avg=8.42ms   min=2.1ms    med=6.55ms   max=86.98ms  p(90)=14.22ms  p(95)=18.82ms
+       { expected_response:true }...: avg=8.42ms   min=2.1ms    med=6.55ms   max=86.98ms  p(90)=14.22ms  p(95)=18.82ms
+     http_req_failed................: 0.00%  ✓ 0          ✗ 9232 
+     http_req_receiving.............: avg=16.95µs  min=3µs      med=13µs     max=889µs    p(90)=28µs     p(95)=36µs   
+     http_req_sending...............: avg=11.67µs  min=2µs      med=8µs      max=2.04ms   p(90)=18µs     p(95)=25µs   
+     http_req_tls_handshaking.......: avg=0s       min=0s       med=0s       max=0s       p(90)=0s       p(95)=0s     
+     http_req_waiting...............: avg=8.39ms   min=2.06ms   med=6.53ms   max=86.96ms  p(90)=14.19ms  p(95)=18.79ms
+     http_reqs......................: 9232   913.290162/s
+     iteration_duration.............: avg=108.68ms min=102.28ms med=106.77ms max=191.32ms p(90)=114.37ms p(95)=119ms  
+     iterations.....................: 9232   913.290162/s
+     vus............................: 100    min=100      max=100
+     vus_max........................: 100    min=100      max=100
+
+
+running (10.1s), 000/100 VUs, 9232 complete and 0 interrupted iterations
+default ✓ [======================================] 100 VUs  10s
+```

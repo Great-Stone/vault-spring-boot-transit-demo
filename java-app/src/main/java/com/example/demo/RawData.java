@@ -14,6 +14,7 @@ public class RawData {
   @Column(name = "data")
   private String data;
 
+  @Temporal(TemporalType.TIMESTAMP)
   @Column(name = "date_created")
   private Date dateCreated;
 
@@ -41,5 +42,10 @@ public class RawData {
 
   public void setDateCreated(Date dateCreated) {
       this.dateCreated = dateCreated;
+  }
+
+  @PrePersist
+  protected void onCreate() {
+      dateCreated = new Date();
   }
 }

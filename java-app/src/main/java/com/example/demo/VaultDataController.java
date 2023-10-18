@@ -112,6 +112,18 @@ public class VaultDataController {
     return "redirect:/"; // 다시 데이터 목록으로 리다이렉트
   }
 
+  @PostMapping("/insertdata-perform-transit")
+  public ResponseEntity<?> insertDataPerfTransit(VaultData newData) {
+    vaultDataRepository.save(newData);
+    return ResponseEntity.ok().build();
+  }
+  
+  @PostMapping("/insertdata-perform-raw")
+  public ResponseEntity<?> insertDataPerfRaw(RawData newData) {
+    rawDataRepository.save(newData);
+    return ResponseEntity.ok().build();
+  }
+
   @GetMapping("/rewrapData/{id}")
   public String rewrapData(@PathVariable Long id) {
     // id를 사용하여 VaultData 엔터티를 찾습니다.
