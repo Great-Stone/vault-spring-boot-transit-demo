@@ -9,5 +9,8 @@ java-app/*.class
 java-app/bin
 java-app/build/
 
+# Ignore k6 report
+k6/result.html
+
 **/terraform-docker/*.tfstate*
 **/terraform-docker/.terraform
